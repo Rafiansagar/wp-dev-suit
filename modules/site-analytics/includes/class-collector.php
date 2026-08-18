@@ -10,7 +10,7 @@ namespace WP_Dev_Suit\Modules\Site_Analytics;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Reads $GLOBALS['wpds'] on shutdown and hands a snapshot to the Store.
+ * Reads $GLOBALS['wpds_site_analytics'] on shutdown and hands a snapshot to the Store.
  */
 class Collector {
 
@@ -64,9 +64,13 @@ class Collector {
 			return false;
 		}
 
-		// Profiling our own admin screen would measure the profiler, and every
-		// page load would also rewrite the option it is reading.
-		if ( isset( $_GET['page'] ) && 'wp-dev-suit' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Profiling our own admin screen would measure the profiler, and every page
+		// load would also rewrite the option it is reading. Matched by prefix so
+		// this keeps holding as more modules are added under the suite's menu.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( 'wp-dev-suit' === $page || 0 === strpos( $page, 'wpds-' ) ) {
 			return false;
 		}
 
@@ -84,7 +88,7 @@ class Collector {
 	 * @return void
 	 */
 	public function record() {
-		if ( empty( $GLOBALS['wpds'] ) || ! is_array( $GLOBALS['wpds'] ) ) {
+		if ( empty( $GLOBALS['wpds_site_analytics'] ) || ! is_array( $GLOBALS['wpds_site_analytics'] ) ) {
 			return;
 		}
 
@@ -95,7 +99,7 @@ class Collector {
 			return;
 		}
 
-		$sa = $GLOBALS['wpds'];
+		$sa = $GLOBALS['wpds_site_analytics'];
 
 		$init_by_owner = array();
 		$init_slowest  = array();

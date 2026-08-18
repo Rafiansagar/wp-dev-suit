@@ -90,10 +90,10 @@ class Admin {
 	 * @return string
 	 */
 	protected function page_url( array $args = array() ) {
-		return add_query_arg(
-			array_merge( array( 'page' => self::SLUG ), $args ),
-			admin_url( 'admin.php' )
-		);
+		// Asked of the Menu rather than built here: whether this module answers on
+		// its own slug or on the suite's parent slug depends on where it landed in
+		// the menu order, which only the Menu knows.
+		return Menu::url( $this->module, $args );
 	}
 
 	/**

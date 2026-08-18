@@ -70,9 +70,10 @@ class Menu {
 		foreach ( $screens as $module ) {
 			// The first module takes the parent's own slug, which replaces the
 			// duplicate "WP Dev Suit" child WordPress would otherwise generate
-			// above the real tools. Every later module gets its own slug.
-			$is_landing = ( $module === $landing );
-			$slug       = $is_landing ? self::SLUG : $module->menu_slug();
+			// above the real tools. Every later module gets its own slug. Resolved
+			// through slug_for so registration and URL building cannot disagree.
+			$slug       = self::slug_for( $module );
+			$is_landing = ( self::SLUG === $slug );
 
 			$submenu_hook = add_submenu_page(
 				self::SLUG,
@@ -103,6 +104,25 @@ class Menu {
 	}
 
 	/**
+	 * The page slug a module actually answers on.
+	 *
+	 * Derived from the registry, not from the hook suffix set during registration.
+	 * admin-post.php never fires admin_menu, so a redirect built there would read
+	 * an empty hook, fall through to the module's own slug, and land the user on
+	 * "Sorry, you are not allowed to access this page" — the action having
+	 * succeeded, only the redirect being wrong.
+	 *
+	 * @param Module $module Module.
+	 * @return string
+	 */
+	public static function slug_for( Module $module ) {
+		$screens = modules()->with_screen();
+		$landing = $screens ? reset( $screens ) : null;
+
+		return ( $landing && $landing->id() === $module->id() ) ? self::SLUG : $module->menu_slug();
+	}
+
+	/**
 	 * URL of a module's screen.
 	 *
 	 * @param Module               $module Module.
@@ -110,12 +130,8 @@ class Menu {
 	 * @return string
 	 */
 	public static function url( Module $module, array $args = array() ) {
-		// A module registered as the landing page answers on the parent slug, not
-		// on its own, so read back what registration actually assigned.
-		$slug = ( 'toplevel_page_' . self::SLUG === $module->hook() ) ? self::SLUG : $module->menu_slug();
-
 		return add_query_arg(
-			array_merge( array( 'page' => $slug ), $args ),
+			array_merge( array( 'page' => self::slug_for( $module ) ), $args ),
 			admin_url( 'admin.php' )
 		);
 	}
