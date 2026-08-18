@@ -7,6 +7,7 @@
 
 namespace WP_Dev_Suit\Modules\Site_Analytics;
 
+use WP_Dev_Suit\Menu;
 use WP_Dev_Suit\Module;
 
 defined( 'ABSPATH' ) || exit;
@@ -101,7 +102,10 @@ class Site_Analytics extends Module {
 		wp_enqueue_style(
 			'wpds-site-analytics',
 			$this->url( 'assets/admin.css' ),
-			array(),
+			// Depends on the suite stylesheet, which supplies every token this file
+			// references. Without the dependency the module could load first and
+			// resolve its colours against nothing.
+			array( Menu::STYLE_HANDLE ),
 			// filemtime, not the plugin version: this is a dev tool whose CSS gets
 			// edited far more often than the version constant gets bumped.
 			file_exists( $path ) ? (string) filemtime( $path ) : WPDS_VERSION

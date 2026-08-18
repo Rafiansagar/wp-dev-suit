@@ -1,195 +1,21 @@
 /**
- * Site Analytics admin screen.
+ * Site Analytics — module-specific styling only.
  *
- * Scoped under .sa-app so nothing here can leak into other admin pages, and so
- * the WordPress admin's own styles lose specificity fights inside our markup.
+ * Enqueued with the suite stylesheet as a dependency, so the tokens, panels,
+ * tables, buttons and form controls all come from there. Only what is genuinely
+ * peculiar to this module lives here: the duration sparkline, the request-type
+ * pill colours, and the per-request init disclosure.
+ *
+ * If something in this file starts looking useful to a second module, it belongs
+ * in assets/suite.css instead.
  */
 
-.sa-app {
-	/* Light palette. Every colour is defined here; the dark block below only
-	   reassigns these tokens, so no rule needs a dark-mode duplicate. */
-	--sa-bg: #f6f7f9;
-	--sa-surface: #ffffff;
-	--sa-surface-2: #fafbfc;
-	--sa-border: #e3e5e8;
-	--sa-border-strong: #d3d6da;
-	--sa-text: #1d2327;
-	--sa-muted: #6b7280;
-	--sa-faint: #9aa1a9;
-	--sa-accent: #3858e9;
-	--sa-accent-soft: rgba(56, 88, 233, 0.1);
-	--sa-good: #11a36b;
-	--sa-warn: #d68100;
-	--sa-bad: #d63638;
-	--sa-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
-	--sa-radius: 10px;
+/* ------------------------------------------------------------- sparkline */
 
-	max-width: 1400px;
-	margin: 0 auto;
-	/* The admin around us stays light even when the OS is dark, so the component
-	   has to paint its own ground or it reads as a broken island. */
-	background: var(--sa-bg);
-	padding: 0 20px 24px;
-	border-radius: 12px;
-	color: var(--sa-text);
-	font-size: 13px;
-	line-height: 1.5;
-}
-
-@media ( prefers-color-scheme: dark ) {
-	.sa-app {
-		--sa-bg: #16181c;
-		--sa-surface: #1e2126;
-		--sa-surface-2: #23272d;
-		--sa-border: #32373e;
-		--sa-border-strong: #3f454e;
-		--sa-text: #e6e8eb;
-		--sa-muted: #9ba3ad;
-		--sa-faint: #6f7681;
-		--sa-accent: #7b8fff;
-		--sa-accent-soft: rgba(123, 143, 255, 0.14);
-		--sa-good: #34d399;
-		--sa-warn: #fbbf24;
-		--sa-bad: #f87171;
-		--sa-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-	}
-}
-
-/* WordPress prints its own h1 above our markup; hide it and use our header. */
-.site-analytics-page > h1:first-of-type {
-	display: none;
-}
-
-/* ---------------------------------------------------------------- header */
-
-.sa-head {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 20px;
-	flex-wrap: wrap;
-	padding: 24px 0 20px;
-}
-
-/* Prefixed with .sa-app throughout this file wherever WordPress ships a rule for
-   the same bare element. Core's `.wrap h1` matches our specificity exactly and
-   its stylesheet loads after ours, so an unprefixed `.sa-head h1` lost the tie
-   and rendered near-black on the dark surface. */
-.sa-app .sa-head h1 {
-	margin: 0;
-	padding: 0;
-	font-size: 23px;
-	font-weight: 600;
-	letter-spacing: -0.01em;
-	color: var(--sa-text);
-}
-
-.sa-app .sa-head p {
-	margin: 4px 0 0;
-	color: var(--sa-muted);
-	font-size: 13px;
-	max-width: 62ch;
-}
-
-.sa-head-actions {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-/* ------------------------------------------------------------ status dot */
-
-.sa-status {
-	display: inline-flex;
-	align-items: center;
-	gap: 7px;
-	padding: 6px 12px 6px 10px;
-	border: 1px solid var(--sa-border);
-	border-radius: 999px;
-	background: var(--sa-surface);
-	font-size: 12px;
-	font-weight: 500;
-	white-space: nowrap;
-}
-
-.sa-status::before {
-	content: "";
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: var(--sa-faint);
-	flex: none;
-}
-
-.sa-status.is-live::before {
-	background: var(--sa-good);
-	box-shadow: 0 0 0 3px rgba(17, 163, 107, 0.18);
-	animation: sa-pulse 2s ease-in-out infinite;
-}
-
-@keyframes sa-pulse {
-	0%, 100% { opacity: 1; }
-	50%      { opacity: 0.45; }
-}
-
-@media ( prefers-reduced-motion: reduce ) {
-	.sa-status.is-live::before { animation: none; }
-}
-
-/* ----------------------------------------------------------------- cards */
-
-.sa-cards {
-	display: grid;
-	grid-template-columns: repeat( auto-fit, minmax( 190px, 1fr ) );
-	gap: 12px;
-	margin-bottom: 20px;
-}
-
-.sa-card {
-	background: var(--sa-surface);
-	border: 1px solid var(--sa-border);
-	border-radius: var(--sa-radius);
-	box-shadow: var(--sa-shadow);
-	padding: 16px 18px;
-	position: relative;
-	overflow: hidden;
-}
-
-.sa-card-label {
-	display: block;
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.06em;
-	color: var(--sa-muted);
-}
-
-.sa-card-value {
-	display: block;
-	margin: 6px 0 2px;
-	font-size: 28px;
-	font-weight: 600;
-	letter-spacing: -0.02em;
-	line-height: 1.15;
-	font-variant-numeric: tabular-nums;
-}
-
-.sa-card-value small {
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--sa-muted);
-	margin-left: 2px;
-}
-
-.sa-card-meta {
-	display: block;
-	font-size: 12px;
-	color: var(--sa-muted);
-	font-variant-numeric: tabular-nums;
-}
-
-/* Sparkline of the last N durations, oldest to newest. */
-.sa-spark {
+/* Durations for one request type, oldest to newest. Drawn as a plain SVG path
+   rather than a charting library — the point of this module is not adding
+   weight to the pages it measures. */
+.wpds-spark {
 	display: block;
 	width: 100%;
 	height: 28px;
@@ -197,250 +23,65 @@
 	overflow: visible;
 }
 
-.sa-spark path {
+.wpds-spark path {
 	fill: none;
-	stroke: var(--sa-accent);
+	stroke: var(--wpds-accent);
 	stroke-width: 1.5;
 	stroke-linecap: round;
 	stroke-linejoin: round;
 	vector-effect: non-scaling-stroke;
 }
 
-.sa-spark .sa-spark-area {
-	fill: var(--sa-accent-soft);
+.wpds-spark .wpds-spark-area {
+	fill: var(--wpds-accent-soft);
 	stroke: none;
 }
 
-/* ------------------------------------------------------------------ tabs */
+/* ---------------------------------------------------- request type pills */
 
-.sa-tabs {
-	display: inline-flex;
-	gap: 2px;
-	padding: 3px;
-	margin-bottom: 16px;
-	background: var(--sa-surface-2);
-	border: 1px solid var(--sa-border);
-	border-radius: 9px;
-}
+/* Colour by request type. The base .wpds-pill comes from the suite; these are
+   the only modifiers, and they mean nothing outside this module. */
+.wpds-pill.is-frontend { color: var(--wpds-accent); border-color: var(--wpds-accent); background: var(--wpds-accent-soft); }
+.wpds-pill.is-ajax     { color: var(--wpds-warn); border-color: var(--wpds-warn); background: rgba( 214, 129, 0, 0.1 ); }
+.wpds-pill.is-rest     { color: var(--wpds-good); border-color: var(--wpds-good); background: rgba( 17, 163, 107, 0.1 ); }
 
-.sa-tab {
-	display: inline-block;
-	padding: 6px 14px;
-	border-radius: 7px;
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--sa-muted);
-	text-decoration: none;
-	transition: background 0.12s ease, color 0.12s ease;
-}
+/* ------------------------------------------------- per-request init list */
 
-.sa-tab:hover,
-.sa-tab:focus {
-	color: var(--sa-text);
-	background: var(--sa-accent-soft);
-	box-shadow: none;
-	outline: none;
-}
-
-.sa-tab.is-active {
-	background: var(--sa-surface);
-	color: var(--sa-text);
-	box-shadow: var(--sa-shadow);
-}
-
-/* ----------------------------------------------------------------- panel */
-
-.sa-panel {
-	background: var(--sa-surface);
-	border: 1px solid var(--sa-border);
-	border-radius: var(--sa-radius);
-	box-shadow: var(--sa-shadow);
-	overflow: hidden;
-}
-
-.sa-panel-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	flex-wrap: wrap;
-	padding: 14px 18px;
-	border-bottom: 1px solid var(--sa-border);
-	background: var(--sa-surface-2);
-}
-
-.sa-app .sa-panel-head h2 {
-	margin: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--sa-text);
-}
-
-.sa-app .sa-panel-head p {
-	margin: 3px 0 0;
-	font-size: 12px;
-	color: var(--sa-muted);
-	max-width: 78ch;
-}
-
-.sa-panel-body {
-	padding: 18px;
-}
-
-/* ---------------------------------------------------------------- tables */
-
-.sa-table {
-	width: 100%;
-	border-collapse: collapse;
-	font-variant-numeric: tabular-nums;
-}
-
-.sa-table th {
-	text-align: left;
-	padding: 9px 14px;
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: var(--sa-muted);
-	border-bottom: 1px solid var(--sa-border);
-	background: var(--sa-surface-2);
-	position: sticky;
-	top: 32px;
-	z-index: 1;
-}
-
-.sa-table td {
-	padding: 11px 14px;
-	border-bottom: 1px solid var(--sa-border);
-	vertical-align: middle;
-	text-align: left !important;
-}
-
-.sa-table tbody tr:last-child td {
-	border-bottom: 0;
-}
-
-.sa-table tbody tr:hover td {
-	background: var(--sa-accent-soft);
-}
-
-.sa-num {
-	white-space: nowrap;
-}
-
-.sa-rank {
-	width: 34px;
-	color: var(--sa-faint);
-	font-size: 12px;
-	text-align: right;
-}
-
-.sa-name {
-	font-weight: 500;
-	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-	font-size: 12px;
-	word-break: break-word;
-}
-
-.sa-strong {
-	font-weight: 600;
-	font-size: 14px;
-}
-
-.sa-sub {
-	color: var(--sa-muted);
-	font-size: 11px;
-}
-
-/* Explicit column sizing. Left to itself the plugin-name column absorbed every
-   spare pixel and stranded the numeric columns against the right edge. */
-.sa-app .sa-table th.sa-rank { width: 44px; }
-.sa-app .sa-table th.sa-col-name { width: 24%; }
-.sa-app .sa-table th.sa-col-total { width: 96px; }
-.sa-app .sa-table th.sa-col-sm { width: 82px; }
-
-/* -------------------------------------------------------------- bar cell */
-
-.sa-bar-col {
-	width: 30%;
-	min-width: 120px;
-}
-
-.sa-bar {
-	display: block;
-	height: 6px;
-	border-radius: 999px;
-	background: var(--sa-border);
-	overflow: hidden;
-}
-
-.sa-bar-fill {
-	display: block;
-	height: 100%;
-	border-radius: 999px;
-	background: linear-gradient( 90deg, var(--sa-accent), #8b7cf6 );
-}
-
-.sa-bar-fill.is-warn { background: linear-gradient( 90deg, var(--sa-warn), #f0a63a ); }
-.sa-bar-fill.is-bad  { background: linear-gradient( 90deg, var(--sa-bad), #ef6b6d ); }
-.sa-bar-fill.is-good { background: linear-gradient( 90deg, var(--sa-good), #3ecf94 ); }
-
-/* --------------------------------------------------------------- pills */
-
-.sa-pill {
-	display: inline-block;
-	padding: 2px 9px;
-	border-radius: 999px;
-	font-size: 11px;
-	font-weight: 500;
-	background: var(--sa-surface-2);
-	border: 1px solid var(--sa-border);
-	color: var(--sa-muted);
-	white-space: nowrap;
-}
-
-.sa-pill.is-frontend { color: var(--sa-accent); border-color: var(--sa-accent); background: var(--sa-accent-soft); }
-.sa-pill.is-ajax     { color: var(--sa-warn); border-color: var(--sa-warn); background: rgba( 214, 129, 0, 0.1 ); }
-.sa-pill.is-rest     { color: var(--sa-good); border-color: var(--sa-good); background: rgba( 17, 163, 107, 0.1 ); }
-
-/* ------------------------------------------------------------- requests */
-
-.sa-req-detail {
+.wpds-req-detail {
 	margin: 0;
 }
 
-.sa-req-detail > summary {
+.wpds-req-detail > summary {
 	cursor: pointer;
 	list-style: none;
-	color: var(--sa-muted);
+	color: var(--wpds-muted);
 	font-size: 12px;
 	user-select: none;
 }
 
-.sa-req-detail > summary::-webkit-details-marker {
+.wpds-req-detail > summary::-webkit-details-marker {
 	display: none;
 }
 
-.sa-req-detail > summary::before {
+.wpds-req-detail > summary::before {
 	content: "\25B8";
 	display: inline-block;
 	margin-right: 6px;
 	transition: transform 0.12s ease;
 }
 
-.sa-req-detail[open] > summary::before {
+.wpds-req-detail[open] > summary::before {
 	transform: rotate( 90deg );
 }
 
-.sa-req-list {
+.wpds-req-list {
 	margin: 8px 0 2px;
 	padding: 0;
 	list-style: none;
-	border-left: 2px solid var(--sa-border);
+	border-left: 2px solid var(--wpds-border);
 }
 
-.sa-req-list li {
+.wpds-req-list li {
 	display: flex;
 	align-items: baseline;
 	gap: 8px;
@@ -448,197 +89,15 @@
 	font-size: 12px;
 }
 
-.sa-req-list b {
+.wpds-req-list b {
 	min-width: 62px;
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.sa-req-list code {
+.wpds-req-list code {
 	background: none;
 	padding: 0;
 	font-size: 11px;
-	color: var(--sa-muted);
-}
-
-/* -------------------------------------------------------------- settings */
-
-.sa-fields {
-	display: grid;
-	gap: 22px;
-	max-width: 640px;
-}
-
-.sa-app .sa-field > label:first-child,
-.sa-app .sa-field > .sa-field-title {
-	display: block;
-	font-weight: 600;
-	font-size: 13px;
-	margin-bottom: 3px;
-	color: var(--sa-text);
-}
-
-.sa-field .sa-help {
-	display: block;
-	color: var(--sa-muted);
-	font-size: 12px;
-	margin-top: 5px;
-}
-
-.sa-check {
-	display: flex;
-	align-items: flex-start;
-	gap: 9px;
-	padding: 12px 14px;
-	border: 1px solid var(--sa-border);
-	border-radius: 8px;
-	background: var(--sa-surface-2);
-	cursor: pointer;
-}
-
-.sa-check input {
-	margin: 2px 0 0;
-	flex: none;
-}
-
-.sa-app .sa-check strong {
-	display: block;
-	font-size: 13px;
-	color: var(--sa-text);
-}
-
-.sa-check span {
-	display: block;
-	color: var(--sa-muted);
-	font-size: 12px;
-}
-
-.sa-chips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.sa-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 5px 12px;
-	border: 1px solid var(--sa-border);
-	border-radius: 999px;
-	background: var(--sa-surface-2);
-	font-size: 12px;
-	cursor: pointer;
-}
-
-.sa-chip input {
-	margin: 0;
-}
-
-.sa-chip:has( input:checked ) {
-	border-color: var(--sa-accent);
-	background: var(--sa-accent-soft);
-	color: var(--sa-accent);
-	font-weight: 500;
-}
-
-.sa-inline-num {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.sa-app input[type="number"] {
-	background: var(--sa-surface);
-	border: 1px solid var(--sa-border-strong);
-	border-radius: 6px;
-	color: var(--sa-text);
-	padding: 5px 8px;
-	width: 92px;
-}
-
-/* --------------------------------------------------------------- buttons */
-
-.sa-btn {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 7px 15px;
-	border-radius: 7px;
-	border: 1px solid var(--sa-border-strong);
-	background: var(--sa-surface);
-	color: var(--sa-text);
-	font-size: 13px;
-	font-weight: 500;
-	line-height: 1.4;
-	text-decoration: none;
-	cursor: pointer;
-	transition: background 0.12s ease, border-color 0.12s ease;
-}
-
-.sa-btn:hover {
-	background: var(--sa-surface-2);
-	border-color: var(--sa-faint);
-	color: var(--sa-text);
-}
-
-.sa-btn-primary {
-	background: var(--sa-accent);
-	border-color: var(--sa-accent);
-	color: #fff;
-}
-
-.sa-btn-primary:hover {
-	background: #2c46c4;
-	border-color: #2c46c4;
-	color: #fff;
-}
-
-.sa-btn-danger:hover {
-	border-color: var(--sa-bad);
-	color: var(--sa-bad);
-}
-
-/* --------------------------------------------------------------- notices */
-
-.sa-note {
-	display: flex;
-	gap: 10px;
-	align-items: flex-start;
-	padding: 12px 16px;
-	margin-bottom: 16px;
-	border: 1px solid var(--sa-border);
-	border-left: 3px solid var(--sa-accent);
-	border-radius: 8px;
-	background: var(--sa-surface);
-	font-size: 13px;
-}
-
-.sa-note.is-warn { border-left-color: var(--sa-warn); }
-.sa-note.is-good { border-left-color: var(--sa-good); }
-
-.sa-note a {
-	color: var(--sa-accent);
-}
-
-.sa-empty {
-	padding: 56px 24px;
-	text-align: center;
-	color: var(--sa-muted);
-}
-
-.sa-app .sa-empty strong {
-	display: block;
-	font-size: 15px;
-	color: var(--sa-text);
-	margin-bottom: 4px;
-}
-
-/* ------------------------------------------------------------ responsive */
-
-@media ( max-width: 782px ) {
-	.sa-bar-col { display: none; }
-	.sa-table th,
-	.sa-table td { padding: 9px 10px; }
-	.sa-table th { top: 46px; }
+	color: var(--wpds-muted);
 }

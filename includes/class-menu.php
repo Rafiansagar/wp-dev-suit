@@ -21,6 +21,12 @@ class Menu {
 	const SLUG = 'wp-dev-suit';
 
 	/**
+	 * Handle of the shared stylesheet. Modules depend on this rather than
+	 * duplicating the tokens and components it defines.
+	 */
+	const STYLE_HANDLE = 'wpds-suite';
+
+	/**
 	 * Module registry.
 	 *
 	 * @var Modules
@@ -96,10 +102,24 @@ class Menu {
 	 */
 	public function assets( $hook ) {
 		foreach ( $this->modules->with_screen() as $module ) {
-			if ( $module->hook() && $module->hook() === $hook ) {
-				$module->enqueue();
-				return;
+			if ( ! $module->hook() || $module->hook() !== $hook ) {
+				continue;
 			}
+
+			// The shared chrome loads first and unconditionally, so a module only
+			// ever ships what is peculiar to itself. Modules declare this handle as
+			// a dependency rather than re-registering the tokens they rely on.
+			$path = WPDS_DIR . 'assets/suite.css';
+
+			wp_enqueue_style(
+				self::STYLE_HANDLE,
+				plugins_url( 'assets/suite.css', WPDS_FILE ),
+				array(),
+				file_exists( $path ) ? (string) filemtime( $path ) : WPDS_VERSION
+			);
+
+			$module->enqueue();
+			return;
 		}
 	}
 

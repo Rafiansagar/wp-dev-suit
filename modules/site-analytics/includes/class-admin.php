@@ -152,7 +152,7 @@ class Admin {
 		$pct = $max > 0 ? max( 1, min( 100, ( $value / $max ) * 100 ) ) : 0;
 
 		return sprintf(
-			'<span class="sa-bar"><span class="sa-bar-fill %s" style="width:%s%%"></span></span>',
+			'<span class="wpds-bar"><span class="wpds-bar-fill %s" style="width:%s%%"></span></span>',
 			esc_attr( $this->severity( $value ) ),
 			esc_attr( (string) round( $pct, 1 ) )
 		);
@@ -192,7 +192,7 @@ class Admin {
 		$area = $line . ' L100,100 L0,100 Z';
 
 		return sprintf(
-			'<svg class="sa-spark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="sa-spark-area" d="%s"/><path d="%s"/></svg>',
+			'<svg class="wpds-spark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="wpds-spark-area" d="%s"/><path d="%s"/></svg>',
 			esc_attr( $area ),
 			esc_attr( $line )
 		);
@@ -244,16 +244,16 @@ class Admin {
 			$tab = 'plugins';
 		}
 
-		echo '<div class="wrap wp-dev-suit-page"><div class="sa-app">';
+		echo '<div class="wrap wpds-page"><div class="wpds-app">';
 
 		$this->header( $settings, $log, $tab );
 		$this->notices();
 		$this->cards( $log );
 
-		echo '<nav class="sa-tabs">';
+		echo '<nav class="wpds-tabs">';
 		foreach ( $tabs as $key => $label ) {
 			printf(
-				'<a href="%s" class="sa-tab %s">%s</a>',
+				'<a href="%s" class="wpds-tab %s">%s</a>',
 				esc_url( $this->page_url( array( 'tab' => $key ) ) ),
 				esc_attr( $key === $tab ? 'is-active' : '' ),
 				esc_html( $label )
@@ -289,13 +289,13 @@ class Admin {
 	protected function header( array $settings, array $log, $tab = '' ) {
 		$live = ! empty( $settings['enabled'] );
 
-		echo '<header class="sa-head"><div>';
+		echo '<header class="wpds-head"><div>';
 		echo '<h1>' . esc_html__( 'Site Analytics', 'wp-dev-suit' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Where each request actually spends its time — which plugin, which boot phase, which hook.', 'wp-dev-suit' ) . '</p>';
-		echo '</div><div class="sa-head-actions">';
+		echo '</div><div class="wpds-head-actions">';
 
 		printf(
-			'<span class="sa-status %s">%s</span>',
+			'<span class="wpds-status %s">%s</span>',
 			esc_attr( $live ? 'is-live' : '' ),
 			esc_html(
 				$live
@@ -310,8 +310,8 @@ class Admin {
 
 		// Doubles as the active-state indicator now that Settings is not a tab.
 		printf(
-			'<a class="sa-btn %s" href="%s">%s</a>',
-			esc_attr( 'settings' === $tab ? 'sa-btn-primary' : '' ),
+			'<a class="wpds-btn %s" href="%s">%s</a>',
+			esc_attr( 'settings' === $tab ? 'wpds-btn-primary' : '' ),
 			esc_url( $this->page_url( array( 'tab' => 'settings' ) ) ),
 			esc_html__( 'Settings', 'wp-dev-suit' )
 		);
@@ -327,10 +327,10 @@ class Admin {
 	protected function notices() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['updated'] ) ) {
-			echo '<div class="sa-note is-good">' . esc_html__( 'Settings saved.', 'wp-dev-suit' ) . '</div>';
+			echo '<div class="wpds-note is-good">' . esc_html__( 'Settings saved.', 'wp-dev-suit' ) . '</div>';
 		}
 		if ( ! empty( $_GET['cleared'] ) ) {
-			echo '<div class="sa-note is-good">' . esc_html__( 'Log cleared.', 'wp-dev-suit' ) . '</div>';
+			echo '<div class="wpds-note is-good">' . esc_html__( 'Log cleared.', 'wp-dev-suit' ) . '</div>';
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
@@ -355,16 +355,16 @@ class Admin {
 			'cli'      => __( 'WP-CLI', 'wp-dev-suit' ),
 		);
 
-		echo '<div class="sa-cards">';
+		echo '<div class="wpds-cards">';
 
 		foreach ( Store::by_type( $log ) as $row ) {
 			$type = (string) $row['type'];
 
-			echo '<div class="sa-card">';
-			echo '<span class="sa-card-label">' . esc_html( $labels[ $type ] ?? $type ) . '</span>';
-			echo '<span class="sa-card-value">' . wp_kses_post( $this->ms( $row['ms'], true ) ) . '</span>';
+			echo '<div class="wpds-card">';
+			echo '<span class="wpds-card-label">' . esc_html( $labels[ $type ] ?? $type ) . '</span>';
+			echo '<span class="wpds-card-value">' . wp_kses_post( $this->ms( $row['ms'], true ) ) . '</span>';
 
-			echo '<span class="sa-card-meta">';
+			echo '<span class="wpds-card-meta">';
 			printf(
 				/* translators: 1: fastest time, 2: slowest time */
 				esc_html__( '%1$s – %2$s', 'wp-dev-suit' ),
@@ -373,7 +373,7 @@ class Admin {
 			);
 			echo '</span>';
 
-			echo '<span class="sa-card-meta">';
+			echo '<span class="wpds-card-meta">';
 			printf(
 				/* translators: 1: request count, 2: query count, 3: peak memory */
 				esc_html__( '%1$d req · %2$d queries · %3$s', 'wp-dev-suit' ),
@@ -415,7 +415,7 @@ class Admin {
 	 * @return void
 	 */
 	protected function panel_open( $title, $note = '', $extra = null ) {
-		echo '<section class="sa-panel"><div class="sa-panel-head"><div>';
+		echo '<section class="wpds-panel"><div class="wpds-panel-head"><div>';
 		echo '<h2>' . esc_html( $title ) . '</h2>';
 
 		if ( $note ) {
@@ -469,8 +469,8 @@ class Admin {
 		}
 
 		if ( empty( $settings['profile_init'] ) ) {
-			echo '<div class="sa-panel-body" style="padding-bottom:0">';
-			echo '<div class="sa-note is-warn">' . esc_html__( 'The init profiler is off, so the Init column is empty and this ranking only reflects include cost. Most plugins do their real work on init.', 'wp-dev-suit' ) . '</div>';
+			echo '<div class="wpds-panel-body" style="padding-bottom:0">';
+			echo '<div class="wpds-note is-warn">' . esc_html__( 'The init profiler is off, so the Init column is empty and this ranking only reflects include cost. Most plugins do their real work on init.', 'wp-dev-suit' ) . '</div>';
 			echo '</div>';
 		}
 
@@ -480,16 +480,16 @@ class Admin {
 			$grand += (float) $row['total'];
 		}
 
-		echo '<table class="sa-table"><thead><tr>';
-		echo '<th class="sa-rank">#</th>';
-		echo '<th class="sa-col-name">' . esc_html__( 'Plugin', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-total">' . esc_html__( 'Total', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-bar-col"></th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Share', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Load', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Init', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Files', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Memory', 'wp-dev-suit' ) . '</th>';
+		echo '<table class="wpds-table"><thead><tr>';
+		echo '<th class="wpds-rank">#</th>';
+		echo '<th class="wpds-col-name">' . esc_html__( 'Plugin', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-total">' . esc_html__( 'Total', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-bar-col"></th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Share', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Load', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Init', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Files', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Memory', 'wp-dev-suit' ) . '</th>';
 		echo '</tr></thead><tbody>';
 
 		$rank = 0;
@@ -498,15 +498,15 @@ class Admin {
 			$share = $grand > 0 ? ( $row['total'] / $grand ) * 100 : 0;
 
 			echo '<tr>';
-			echo '<td class="sa-rank">' . esc_html( (string) $rank ) . '</td>';
-			echo '<td class="sa-name">' . esc_html( $row['slug'] ) . '</td>';
-			echo '<td class="sa-num sa-strong">' . esc_html( $this->ms( $row['total'] ) ) . '</td>';
-			echo '<td class="sa-bar-col">' . wp_kses_post( $this->bar( $row['total'], $max ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( number_format_i18n( $share, 1 ) ) . '%</td>';
-			echo '<td class="sa-num">' . esc_html( $this->ms( $row['load'] ) ) . '</td>';
-			echo '<td class="sa-num">' . esc_html( $this->ms( $row['init'] ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( number_format_i18n( $row['files'] ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( $this->mb( $row['mem'] ) ) . '</td>';
+			echo '<td class="wpds-rank">' . esc_html( (string) $rank ) . '</td>';
+			echo '<td class="wpds-name">' . esc_html( $row['slug'] ) . '</td>';
+			echo '<td class="wpds-num wpds-strong">' . esc_html( $this->ms( $row['total'] ) ) . '</td>';
+			echo '<td class="wpds-bar-col">' . wp_kses_post( $this->bar( $row['total'], $max ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( number_format_i18n( $share, 1 ) ) . '%</td>';
+			echo '<td class="wpds-num">' . esc_html( $this->ms( $row['load'] ) ) . '</td>';
+			echo '<td class="wpds-num">' . esc_html( $this->ms( $row['init'] ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( number_format_i18n( $row['files'] ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( $this->mb( $row['mem'] ) ) . '</td>';
 			echo '</tr>';
 		}
 
@@ -541,13 +541,13 @@ class Admin {
 			$grand += (float) $row['ms'];
 		}
 
-		echo '<table class="sa-table"><thead><tr>';
-		echo '<th class="sa-col-name">' . esc_html__( 'Phase', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-total">' . esc_html__( 'Time', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-bar-col"></th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Share', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Files', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num sa-col-sm">' . esc_html__( 'Memory', 'wp-dev-suit' ) . '</th>';
+		echo '<table class="wpds-table"><thead><tr>';
+		echo '<th class="wpds-col-name">' . esc_html__( 'Phase', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-total">' . esc_html__( 'Time', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-bar-col"></th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Share', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Files', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num wpds-col-sm">' . esc_html__( 'Memory', 'wp-dev-suit' ) . '</th>';
 		echo '</tr></thead><tbody>';
 
 		foreach ( $rows as $row ) {
@@ -555,11 +555,11 @@ class Admin {
 
 			echo '<tr>';
 			echo '<td>' . esc_html( $row['label'] ) . '</td>';
-			echo '<td class="sa-num sa-strong">' . esc_html( $this->ms( $row['ms'] ) ) . '</td>';
-			echo '<td class="sa-bar-col">' . wp_kses_post( $this->bar( $row['ms'], $max ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( number_format_i18n( $share, 1 ) ) . '%</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( number_format_i18n( $row['files'] ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( $this->mb( $row['mem'] ) ) . '</td>';
+			echo '<td class="wpds-num wpds-strong">' . esc_html( $this->ms( $row['ms'] ) ) . '</td>';
+			echo '<td class="wpds-bar-col">' . wp_kses_post( $this->bar( $row['ms'], $max ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( number_format_i18n( $share, 1 ) ) . '%</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( number_format_i18n( $row['files'] ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( $this->mb( $row['mem'] ) ) . '</td>';
 			echo '</tr>';
 		}
 
@@ -579,7 +579,7 @@ class Admin {
 				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 				wp_nonce_field( 'wpds_clear' );
 				echo '<input type="hidden" name="action" value="wpds_clear" />';
-				echo '<button type="submit" class="sa-btn sa-btn-danger">' . esc_html__( 'Clear log', 'wp-dev-suit' ) . '</button>';
+				echo '<button type="submit" class="wpds-btn wpds-btn-danger">' . esc_html__( 'Clear log', 'wp-dev-suit' ) . '</button>';
 				echo '</form>';
 			}
 			: null;
@@ -596,13 +596,13 @@ class Admin {
 			return;
 		}
 
-		echo '<table class="sa-table"><thead><tr>';
+		echo '<table class="wpds-table"><thead><tr>';
 		echo '<th>' . esc_html__( 'When', 'wp-dev-suit' ) . '</th>';
 		echo '<th>' . esc_html__( 'Type', 'wp-dev-suit' ) . '</th>';
 		echo '<th>' . esc_html__( 'Request', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num">' . esc_html__( 'Total', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num">' . esc_html__( 'Queries', 'wp-dev-suit' ) . '</th>';
-		echo '<th class="sa-num">' . esc_html__( 'Peak mem', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num">' . esc_html__( 'Total', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num">' . esc_html__( 'Queries', 'wp-dev-suit' ) . '</th>';
+		echo '<th class="wpds-num">' . esc_html__( 'Peak mem', 'wp-dev-suit' ) . '</th>';
 		echo '</tr></thead><tbody>';
 
 		foreach ( $log as $row ) {
@@ -610,17 +610,17 @@ class Admin {
 			$label = ! empty( $row['action'] ) ? $row['action'] : ( $row['url'] ?? '' );
 
 			echo '<tr>';
-			echo '<td class="sa-sub">' . esc_html( wp_date( 'H:i:s', (int) $row['time'] ) ) . '</td>';
-			echo '<td><span class="sa-pill is-' . esc_attr( $type ) . '">' . esc_html( $type ) . '</span></td>';
+			echo '<td class="wpds-sub">' . esc_html( wp_date( 'H:i:s', (int) $row['time'] ) ) . '</td>';
+			echo '<td><span class="wpds-pill is-' . esc_attr( $type ) . '">' . esc_html( $type ) . '</span></td>';
 
 			echo '<td>';
-			echo '<div class="sa-name">' . esc_html( (string) $label ) . '</div>';
+			echo '<div class="wpds-name">' . esc_html( (string) $label ) . '</div>';
 			$this->request_detail( (array) ( $row['init_slowest'] ?? array() ) );
 			echo '</td>';
 
-			echo '<td class="sa-num sa-strong">' . esc_html( $this->ms( $row['total_ms'] ?? 0 ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( number_format_i18n( (int) ( $row['queries'] ?? 0 ) ) ) . '</td>';
-			echo '<td class="sa-num sa-sub">' . esc_html( $this->mb( (int) ( $row['peak_mem'] ?? 0 ) ) ) . '</td>';
+			echo '<td class="wpds-num wpds-strong">' . esc_html( $this->ms( $row['total_ms'] ?? 0 ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( number_format_i18n( (int) ( $row['queries'] ?? 0 ) ) ) . '</td>';
+			echo '<td class="wpds-num wpds-sub">' . esc_html( $this->mb( (int) ( $row['peak_mem'] ?? 0 ) ) ) . '</td>';
 			echo '</tr>';
 		}
 
@@ -639,17 +639,17 @@ class Admin {
 			return;
 		}
 
-		echo '<details class="sa-req-detail"><summary>';
+		echo '<details class="wpds-req-detail"><summary>';
 		printf(
 			/* translators: %d: number of callbacks listed */
 			esc_html( _n( 'Top %d init callback', 'Top %d init callbacks', count( $slowest ), 'wp-dev-suit' ) ),
 			count( $slowest )
 		);
-		echo '</summary><ul class="sa-req-list">';
+		echo '</summary><ul class="wpds-req-list">';
 
 		foreach ( $slowest as $entry ) {
 			printf(
-				'<li><b>%s</b> <span class="sa-pill">%s</span> <code>%s</code></li>',
+				'<li><b>%s</b> <span class="wpds-pill">%s</span> <code>%s</code></li>',
 				esc_html( $this->ms( $entry['ms'] ) ),
 				esc_html( (string) $entry['owner'] ),
 				esc_html( (string) $entry['name'] )
@@ -676,57 +676,57 @@ class Admin {
 
 		$this->panel_open( __( 'Settings', 'wp-dev-suit' ) );
 
-		echo '<div class="sa-panel-body">';
+		echo '<div class="wpds-panel-body">';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 		wp_nonce_field( 'wpds_save' );
 		echo '<input type="hidden" name="action" value="wpds_save" />';
 
-		echo '<div class="sa-fields">';
+		echo '<div class="wpds-fields">';
 
-		echo '<div class="sa-field">';
-		echo '<label class="sa-check"><input type="checkbox" name="enabled" value="1" ' . checked( 1, (int) $settings['enabled'], false ) . ' /><span>';
+		echo '<div class="wpds-field">';
+		echo '<label class="wpds-check"><input type="checkbox" name="enabled" value="1" ' . checked( 1, (int) $settings['enabled'], false ) . ' /><span>';
 		echo '<strong>' . esc_html__( 'Record request snapshots', 'wp-dev-suit' ) . '</strong>';
 		echo '<span>' . esc_html__( 'Switch this off once you have what you need. The log is capped at the length below, but every recorded request rewrites the whole of it — roughly 5 KB per entry, so a full 100-entry log means a 500 KB write on each request.', 'wp-dev-suit' ) . '</span>';
 		echo '</span></label>';
 		echo '</div>';
 
-		echo '<div class="sa-field">';
-		echo '<label class="sa-check"><input type="checkbox" name="profile_init" value="1" ' . checked( 1, (int) $settings['profile_init'], false ) . ' /><span>';
+		echo '<div class="wpds-field">';
+		echo '<label class="wpds-check"><input type="checkbox" name="profile_init" value="1" ' . checked( 1, (int) $settings['profile_init'], false ) . ' /><span>';
 		echo '<strong>' . esc_html__( 'Time every callback on the init hook', 'wp-dev-suit' ) . '</strong>';
 		echo '<span>' . esc_html__( 'Required to attribute init time to a plugin. Wrapping several hundred callbacks costs a few ms of its own.', 'wp-dev-suit' ) . '</span>';
 		echo '</span></label>';
 		echo '</div>';
 
-		echo '<div class="sa-field">';
-		echo '<span class="sa-field-title">' . esc_html__( 'Request types', 'wp-dev-suit' ) . '</span>';
-		echo '<div class="sa-chips">';
+		echo '<div class="wpds-field">';
+		echo '<span class="wpds-field-title">' . esc_html__( 'Request types', 'wp-dev-suit' ) . '</span>';
+		echo '<div class="wpds-chips">';
 		foreach ( $types as $key => $label ) {
-			echo '<label class="sa-chip"><input type="checkbox" name="types[]" value="' . esc_attr( $key ) . '" ';
+			echo '<label class="wpds-chip"><input type="checkbox" name="types[]" value="' . esc_attr( $key ) . '" ';
 			checked( in_array( $key, (array) $settings['types'], true ) );
 			echo ' /> ' . esc_html( $label ) . '</label>';
 		}
 		echo '</div>';
-		echo '<span class="sa-help">' . esc_html__( 'Only these kinds of request are recorded.', 'wp-dev-suit' ) . '</span>';
+		echo '<span class="wpds-help">' . esc_html__( 'Only these kinds of request are recorded.', 'wp-dev-suit' ) . '</span>';
 		echo '</div>';
 
-		echo '<div class="sa-field">';
-		echo '<label class="sa-field-title" for="sa-keep">' . esc_html__( 'Log length', 'wp-dev-suit' ) . '</label>';
-		echo '<span class="sa-inline-num">';
-		echo '<input type="number" id="sa-keep" name="keep" min="10" max="500" value="' . esc_attr( (string) $settings['keep'] ) . '" />';
-		echo '<span class="sa-help" style="margin:0">' . esc_html__( 'requests kept — oldest drops off; ~5 KB each, and the full log is rewritten on every recorded request', 'wp-dev-suit' ) . '</span>';
+		echo '<div class="wpds-field">';
+		echo '<label class="wpds-field-title" for="wpds-keep">' . esc_html__( 'Log length', 'wp-dev-suit' ) . '</label>';
+		echo '<span class="wpds-inline-num">';
+		echo '<input type="number" id="wpds-keep" name="keep" min="10" max="500" value="' . esc_attr( (string) $settings['keep'] ) . '" />';
+		echo '<span class="wpds-help" style="margin:0">' . esc_html__( 'requests kept — oldest drops off; ~5 KB each, and the full log is rewritten on every recorded request', 'wp-dev-suit' ) . '</span>';
 		echo '</span>';
 		echo '</div>';
 
-		echo '<div class="sa-field">';
-		echo '<label class="sa-field-title" for="sa-sample">' . esc_html__( 'Sample rate', 'wp-dev-suit' ) . '</label>';
-		echo '<span class="sa-inline-num">';
-		echo '<input type="number" id="sa-sample" name="sample" min="1" max="100" value="' . esc_attr( (string) $settings['sample'] ) . '" />';
-		echo '<span class="sa-help" style="margin:0">' . esc_html__( '% of eligible requests — drop it on a busy site', 'wp-dev-suit' ) . '</span>';
+		echo '<div class="wpds-field">';
+		echo '<label class="wpds-field-title" for="wpds-sample">' . esc_html__( 'Sample rate', 'wp-dev-suit' ) . '</label>';
+		echo '<span class="wpds-inline-num">';
+		echo '<input type="number" id="wpds-sample" name="sample" min="1" max="100" value="' . esc_attr( (string) $settings['sample'] ) . '" />';
+		echo '<span class="wpds-help" style="margin:0">' . esc_html__( '% of eligible requests — drop it on a busy site', 'wp-dev-suit' ) . '</span>';
 		echo '</span>';
 		echo '</div>';
 
 		echo '<div>';
-		echo '<button type="submit" class="sa-btn sa-btn-primary">' . esc_html__( 'Save settings', 'wp-dev-suit' ) . '</button>';
+		echo '<button type="submit" class="wpds-btn wpds-btn-primary">' . esc_html__( 'Save settings', 'wp-dev-suit' ) . '</button>';
 		echo '</div>';
 
 		echo '</div>';
@@ -742,7 +742,7 @@ class Admin {
 	 * @return void
 	 */
 	protected function empty_state() {
-		echo '<div class="sa-empty">';
+		echo '<div class="wpds-empty">';
 		echo '<strong>' . esc_html__( 'Nothing recorded yet', 'wp-dev-suit' ) . '</strong>';
 		echo '<span>' . esc_html__( 'Turn recording on, then load a few pages and come back.', 'wp-dev-suit' ) . '</span>';
 		echo '</div>';
