@@ -74,8 +74,11 @@ function mu_loader_contents() {
 	// wp_normalize_path gives forward slashes, which survive being written into a
 	// single-quoted PHP string on Windows. A raw backslash path would not.
 	return str_replace(
-		'{{MODULES_DIR}}',
-		wp_normalize_path( untrailingslashit( WPDS_DIR ) . '/modules' ),
+		array( '{{MODULES_DIR}}', '{{SUITE_BASENAME}}' ),
+		array(
+			wp_normalize_path( untrailingslashit( WPDS_DIR ) . '/modules' ),
+			plugin_basename( WPDS_FILE ),
+		),
 		(string) file_get_contents( $source ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 	);
 }

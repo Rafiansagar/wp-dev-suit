@@ -46,10 +46,14 @@ class Modules {
 			$this->modules[ $module->id() ] = $module;
 		}
 
+		// Tie-broken on id, never on title. title() calls __(), and this runs on
+		// plugins_loaded — translating there trips WordPress 6.7's
+		// _load_textdomain_just_in_time notice. Sorting on a translated string
+		// would also reorder the menu per language, which is its own bug.
 		uasort(
 			$this->modules,
 			function ( Module $a, Module $b ) {
-				return array( $a->position(), $a->title() ) <=> array( $b->position(), $b->title() );
+				return array( $a->position(), $a->id() ) <=> array( $b->position(), $b->id() );
 			}
 		);
 	}

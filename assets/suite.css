@@ -469,13 +469,73 @@
 	gap: 8px;
 }
 
-.wpds-app input[type="number"] {
+/* ------------------------------------------------------------ form fields */
+
+/* Every text-like control, not just number. WordPress styles these globally for
+   a light admin, so anything left unlisted renders as a white box on the dark
+   surface. Selector is .wpds-app-prefixed to outrank core's own
+   `input[type="text"]` rules, which load after ours. */
+.wpds-app input[type="text"],
+.wpds-app input[type="search"],
+.wpds-app input[type="email"],
+.wpds-app input[type="url"],
+.wpds-app input[type="password"],
+.wpds-app input[type="number"],
+.wpds-app textarea,
+.wpds-app select {
 	background: var(--wpds-surface);
 	border: 1px solid var(--wpds-border-strong);
 	border-radius: 6px;
 	color: var(--wpds-text);
-	padding: 5px 8px;
+	padding: 6px 10px;
+	font-size: 13px;
+	line-height: 1.5;
+	max-width: 100%;
+	box-shadow: none;
+	transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.wpds-app input[type="text"]:focus,
+.wpds-app input[type="search"]:focus,
+.wpds-app input[type="email"]:focus,
+.wpds-app input[type="url"]:focus,
+.wpds-app input[type="password"]:focus,
+.wpds-app input[type="number"]:focus,
+.wpds-app textarea:focus,
+.wpds-app select:focus {
+	border-color: var(--wpds-accent);
+	box-shadow: 0 0 0 3px var(--wpds-accent-soft);
+	outline: none;
+}
+
+.wpds-app ::placeholder {
+	color: var(--wpds-faint);
+	opacity: 1;
+}
+
+/* Checkboxes and radios are drawn by the browser, so the only way to keep them
+   from flashing default blue on the dark surface is accent-color. */
+.wpds-app input[type="checkbox"],
+.wpds-app input[type="radio"] {
+	accent-color: var(--wpds-accent);
+}
+
+.wpds-app input[type="number"] {
 	width: 92px;
+}
+
+/* Default width for a free-text field. Replaces core's .regular-text, whose
+   25em is set on a class we would otherwise have to keep fighting. */
+.wpds-input {
+	width: 100%;
+	max-width: 380px;
+}
+
+.wpds-app textarea {
+	width: 100%;
+	max-width: 640px;
+	min-height: 90px;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
 /* --------------------------------------------------------------- buttons */

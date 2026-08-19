@@ -11,8 +11,8 @@
 // regular plugin cannot. This file is copied into mu-plugins on activation and
 // does nothing itself except hand control to each module's mu.php.
 //
-// {{MODULES_DIR}} is substituted with the real path when the file is copied, so
-// this keeps working if the plugin directory is renamed. Do not hardcode it.
+// The {{...}} tokens are substituted with real values when the file is copied,
+// so this keeps working if the plugin directory is renamed. Do not hardcode them.
 
 defined( 'ABSPATH' ) || exit;
 
@@ -22,6 +22,10 @@ if ( defined( 'WPDS_MU_VERSION' ) ) {
 
 define( 'WPDS_MU_VERSION', '1.0.0' );
 define( 'WPDS_MU_MODULES_DIR', '{{MODULES_DIR}}' );
+
+// Modules that filter the active plugin list need this to guarantee they can
+// never switch the suite itself off, which would leave no way to switch it back.
+define( 'WPDS_MU_SUITE_BASENAME', '{{SUITE_BASENAME}}' );
 
 foreach ( (array) glob( WPDS_MU_MODULES_DIR . '/*/mu.php' ) as $wpds_mu_file ) {
 	require_once $wpds_mu_file;
