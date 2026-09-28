@@ -3,7 +3,7 @@
  * Plugin Name: WP Dev Suit
  * Description: Developer tooling for this site. Each tool is a self-contained module under modules/. Currently one — Site Analytics, a request-level performance profiler.
  * Version: 1.0.0
- * Author: RSTheme
+ * Author: Sagar
  * Requires at least: 6.4
  * Requires PHP: 7.4
  * License: GPL-2.0-or-later
