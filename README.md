@@ -1,6 +1,6 @@
 # WP Dev Suit
 
-Developer tooling for this WordPress site.
+Developer tooling for WordPress site.
 
 WP Dev Suit is organized as a small suite: the main plugin discovers modules from
 `modules/`, registers one WordPress admin menu, and installs an early must-use
