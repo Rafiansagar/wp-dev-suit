@@ -13,6 +13,7 @@
 //
 // The {{...}} tokens are substituted with real values when the file is copied,
 // so this keeps working if the plugin directory is renamed. Do not hardcode them.
+//
 
 defined( 'ABSPATH' ) || exit;
 
