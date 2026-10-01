@@ -102,6 +102,12 @@
 	gap: 10px;
 }
 
+/* .test {
+	position: absolute;
+	inset: 0;
+	background: blue;
+} */
+
 /* ------------------------------------------------------------ status dot */
 
 .wpds-status {
